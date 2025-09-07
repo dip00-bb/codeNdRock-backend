@@ -7,7 +7,10 @@ const Problem = require('./Model/ProblemModel'); // import your schema
 
 dotenv.config();
 
-
+// const data = fs.readFileSync("../problems_set/leetcode-problems/merged_problems.json", "utf-8");
+// console.log(typeof data)
+// const problems = JSON.parse(data);
+// console.log(problems)
 
 const run = async () => {
   try {
@@ -18,7 +21,7 @@ const run = async () => {
     // Read JSON file
     const data = fs.readFileSync("../problems_set/leetcode-problems/merged_problems.json", "utf-8");
     console.log(typeof data)
-    const problems = JSON.parse(data).questions;
+    const problems = JSON.parse(data);
 
     for (const p of problems) {
       await Problem.updateOne(
