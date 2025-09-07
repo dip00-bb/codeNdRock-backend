@@ -105,14 +105,14 @@ app.post("/submit-code", async (req, res) => {
   }
 
 
-  console.log("compiled", compiled_output)
-  console.log("expected", expected_output)
+  // console.log("compiled", compiled_output)
+  // console.log("expected", expected_output)
 
   let resultDescription = ''
 
   if (expected_output.includes(compiled_output)) {
 
-    
+
     resultDescription = "Accepted"
   } else {
     resultDescription = "Rejected"
@@ -120,9 +120,48 @@ app.post("/submit-code", async (req, res) => {
 
 
 
-  res.status(200).json({resultDescription})
+  res.status(200).json({ resultDescription })
 
 })
+
+
+app.patch("/update-point", async (req, res) => {
+  try {
+
+    const { resultStatus, clerkId } = req.body;
+
+    // Determine the increment value
+    const incrementValue = resultStatus === "Accepted" ? 10 : -10;
+
+    // Update totalPoint using $inc
+    const updatedUser = await User.findOneAndUpdate(
+      { clerkId: clerkId },           // filter by clerkId
+      { $inc: { totalPoint: incrementValue } },
+      { new: true }                   // return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "Points updated", user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Leaderboard route
+app.get("/leaderboard", async (req, res) => {
+  try {
+    const users = await User.find().sort({ totalPoint: -1 }); // highest points first
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error while fetching leaderboard" });
+  }
+});
+
 
 
 // app.post('/register',)

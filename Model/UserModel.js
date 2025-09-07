@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     name: { type: String },
     solvedProblems: { type: [String], default: [] }, 
     role: { type: String, default: "user" },
+    totalPoint:{type:Number,default:0}
 }) 
 
 module.exports = mongoose.model('User', userSchema);
